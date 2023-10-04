@@ -1,5 +1,4 @@
-import React, { Component, Fragment, useImperativeHandle, useRef } from "react";
-
+import React, { Component, Fragment } from "react";
 import {
   Row,
   Card,
@@ -22,14 +21,6 @@ import { NotificationManager } from "../../components/common/react-notifications
 
 import { Colxx, Separator } from "../../components/common/CustomBootstrap";
 import { BarChart, PieChart } from "../../components/charts";
-import Chart from "chart.js/auto";
-import { toBlob } from "blob-util";
-import ChartjsToImage from "chartjs-to-image";
-import { Bar } from "react-chartjs-2"; // Importa el componente Bar de react-chartjs-2
-import html2canvas from "html2canvas"; // Importa la biblioteca html2canvas
-import FileSaver from "file-saver";
-
-
 
 import Breadcrumb from "../../containers/navs/Breadcrumb";
 import { ReactTableWithPaginationCard } from "../../containers/ui/ReactTableCards";
@@ -50,10 +41,6 @@ const colors = ThemeColors();
 class BudgetDetail extends Component {
   constructor(props) {
     super(props);
-    this.chartRef = useRef(null);
-    this.chart = new Chart(document.querySelector("#chart"));
-
-
     this.state = {
       modalAddBudgetOpen: false,
       filtered_execution: [],
@@ -72,7 +59,6 @@ class BudgetDetail extends Component {
           "Noviembre",
           "Diciembre",
         ],
-
         datasets: [
           // {
           //   label: "Asignado",
@@ -91,14 +77,6 @@ class BudgetDetail extends Component {
         ],
       },
     };
-  }
-
-  downloadChartImage() {
-    const chartImageBase64 = this.chart.toBase64Image();
-
-    const blob = new Blob([chartImageBase64], { type: "image/png" });
-
-    FileSaver.saveAs(blob, "chart.png");
   }
 
   componentDidMount = async () => {
@@ -156,8 +134,8 @@ class BudgetDetail extends Component {
 
     let category_monthly_average = {
       label: "Asignado",
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: colors.themeColor2,
+      backgroundColor: colors.themeColor2_10,
       data: [],
       borderWidth: 2,
     };
@@ -173,8 +151,8 @@ class BudgetDetail extends Component {
 
     let category_executed_dataset = {
       label: "Ejecutado",
-      borderColor: 'rgb(255, 159, 64)',
-      backgroundColor: 'rgba(255, 159, 64, 0.2)',
+      borderColor: colors.themeColor1,
+      backgroundColor: colors.themeColor1_10,
       data: [],
       borderWidth: 2,
     };
@@ -219,8 +197,6 @@ class BudgetDetail extends Component {
         value: e.correlative,
       })
     );
-
-
     return (
       <Fragment>
         <Row>
@@ -273,8 +249,6 @@ class BudgetDetail extends Component {
                   <CardBody>
                     <CardTitle>
                       Presupuesto #{this.props?.selected_budget?.correlative}
-                      {console.log("SIIIIIIIIIIIIIIIIIIIIU")}
-                      {console.log(this.props?.selected_budget)}
                     </CardTitle>
                     <Row>
                       <Colxx>
@@ -409,7 +383,7 @@ class BudgetDetail extends Component {
                   <CardBody>
                     <CardTitle>PRESUPUESTO {this.props?.selected_budget?.name}</CardTitle>
                     <div className="chart-container">
-                      <BarChart ref={this.chartRef}
+                      <BarChart
                         data={{
                           labels: ["Presupuestado", "Asignado", "Ejecutado"],
                           datasets: [
@@ -428,7 +402,6 @@ class BudgetDetail extends Component {
                         }}
                       />
                     </div>
-                    <button onClick={this.downloadChartImage}>Descargar gráfico</button>
                   </CardBody>
                 </Card>
               </Colxx>
@@ -446,25 +419,8 @@ class BudgetDetail extends Component {
                           datasets: [
                             {
                               label: "Valores",
-                              backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(255, 159, 64, 0.2)',
-                                'rgba(255, 205, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(201, 203, 207, 0.2)'
-                              ],
-                              borderColor: [
-                                'rgb(255, 99, 132)',
-                                'rgb(255, 159, 64)',
-                                'rgb(255, 205, 86)',
-                                'rgb(75, 192, 192)',
-                                'rgb(54, 162, 235)',
-                                'rgb(153, 102, 255)',
-                                'rgb(201, 203, 207)'
-                              ],
-                              borderWidth: 1,
+                              borderColor: [colors.themeColor1, colors.themeColor2, colors.themeColor3],
+                              backgroundColor: [colors.themeColor1_10, colors.themeColor2_10, colors.themeColor3_10],
                               data: [
                                 this.props?.selected_budget?.amount_executed || 0,
                                 this.props?.selected_budget?.amount_available || 0,
