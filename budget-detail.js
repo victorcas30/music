@@ -51,17 +51,16 @@ const colors = ThemeColors();
 class BudgetDetail extends Component {
   constructor(props) {
     super(props);
-    chartRef = useRef();
-
+    this.chartRef = useRef(null);
     downloadChartImage() {
-      {
-        const chartImageBase64 = this.chartRef.current.toBase64Image();
+      this.chartRef.current = new Chart(document.querySelector("#chart"));
 
-        const blob = new Blob([chartImageBase64], { type: "image/png" });
+      const chartImageBase64 = this.chartRef.current.toBase64Image();
 
-        FileSaver.saveAs(blob, "chart.png");
-      }
-    };
+      const blob = new Blob([chartImageBase64], { type: "image/png" });
+
+      FileSaver.saveAs(blob, "chart.png");
+    }
 
     this.state = {
       modalAddBudgetOpen: false,
