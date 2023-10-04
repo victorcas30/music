@@ -52,15 +52,7 @@ class BudgetDetail extends Component {
   constructor(props) {
     super(props);
     this.chartRef = useRef(null);
-    downloadChartImage() {
-      this.chartRef.current = new Chart(document.querySelector("#chart"));
 
-      const chartImageBase64 = this.chartRef.current.toBase64Image();
-
-      const blob = new Blob([chartImageBase64], { type: "image/png" });
-
-      FileSaver.saveAs(blob, "chart.png");
-    }
 
     this.state = {
       modalAddBudgetOpen: false,
@@ -99,6 +91,16 @@ class BudgetDetail extends Component {
         ],
       },
     };
+  }
+
+  downloadChartImage() {
+    this.chartRef.current = new Chart(document.querySelector("#chart"));
+
+    const chartImageBase64 = this.chartRef.current.toBase64Image();
+
+    const blob = new Blob([chartImageBase64], { type: "image/png" });
+
+    FileSaver.saveAs(blob, "chart.png");
   }
 
   componentDidMount = async () => {
