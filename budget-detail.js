@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useImperativeHandle } from "react";
+import React, { Component, Fragment, useImperativeHandle, useRef } from "react";
 
 import {
   Row,
@@ -27,7 +27,6 @@ import { toBlob } from "blob-util";
 import ChartjsToImage from "chartjs-to-image";
 import { Bar } from "react-chartjs-2"; // Importa el componente Bar de react-chartjs-2
 import html2canvas from "html2canvas"; // Importa la biblioteca html2canvas
-import { useRef } from "react";
 import FileSaver from "file-saver";
 
 
@@ -52,6 +51,7 @@ class BudgetDetail extends Component {
   constructor(props) {
     super(props);
     this.chartRef = useRef(null);
+    this.chart = new Chart(document.querySelector("#chart"));
 
 
     this.state = {
@@ -94,9 +94,7 @@ class BudgetDetail extends Component {
   }
 
   downloadChartImage() {
-    this.chartRef.current = new Chart(document.querySelector("#chart"));
-
-    const chartImageBase64 = this.chartRef.current.toBase64Image();
+    const chartImageBase64 = this.chart.toBase64Image();
 
     const blob = new Blob([chartImageBase64], { type: "image/png" });
 
@@ -430,7 +428,7 @@ class BudgetDetail extends Component {
                         }}
                       />
                     </div>
-                    <button onClick={() => this.downloadChartImage()}>Descargar Gráfico</button>
+                    <button onClick={this.downloadChartImage}>Descargar gráfico</button>
                   </CardBody>
                 </Card>
               </Colxx>
