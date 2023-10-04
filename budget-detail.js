@@ -1,6 +1,11 @@
 import React, { Component, Fragment } from "react";
+import { saveAs } from 'file-saver';
+import html2canvas from 'html2canvas';
+import FileSaver from "file-saver";
+
 import {
   Row,
+  Button,
   Card,
   CardBody,
   CardTitle,
@@ -41,9 +46,11 @@ const colors = ThemeColors();
 class BudgetDetail extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       modalAddBudgetOpen: false,
       filtered_execution: [],
+      selectedMonths: [],
       barChartData: {
         labels: [
           "Enero",
@@ -182,6 +189,41 @@ class BudgetDetail extends Component {
       },
     });
   };
+
+  handleMonthSelection = (selectedOptions) => {
+    // Actualiza el estado con los meses seleccionados por el usuario
+    this.setState({ selectedMonths: selectedOptions });
+
+    // Obtén los valores de los meses seleccionados
+    const selectedMonthValues = selectedOptions.map((option) => option.value);
+
+    // Filtra los datos del gráfico en función de los meses seleccionados
+    const newBarChartData = {
+      ...this.state.barChartData,
+      datasets: this.state.barChartData.datasets.map((dataset) => ({
+        ...dataset,
+        data: dataset.data.filter((value, index) =>
+          selectedMonthValues.includes(index + 1)
+        ),
+      })),
+    };
+
+    // Actualiza el estado del gráfico con los datos filtrados
+    this.setState({ barChartData: newBarChartData });
+  };
+
+
+  downloadChartImage = () => {
+    const chartContainer = document.querySelector(".chart-container"); // Reemplaza ".chart-container" con el selector correcto de tu contenedor de gráfico
+    if (chartContainer) {
+      html2canvas(chartContainer).then(function (canvas) {
+        canvas.toBlob(function (blob) {
+          saveAs(blob, "chart.png"); // Cambia "chart.png" al nombre de archivo que desees
+        });
+      });
+    }
+  };
+
   render() {
     let select_budget_account_categories = (
       this.props?.selected_budget?.detail || []
@@ -197,6 +239,7 @@ class BudgetDetail extends Component {
         value: e.correlative,
       })
     );
+
     return (
       <Fragment>
         <Row>
@@ -402,9 +445,15 @@ class BudgetDetail extends Component {
                         }}
                       />
                     </div>
+                    <Colxx xxs="2">
+                      <Button color="primary" block className="mb-2" onClick={() => this.downloadChartImage()}> Descargar gráfico </Button>
+                    </Colxx>
                   </CardBody>
                 </Card>
               </Colxx>
+            </Row>
+            <Row>
+
             </Row>
 
             <Row className="mb-4">
@@ -471,6 +520,31 @@ class BudgetDetail extends Component {
                                   }}
                                 />
                               </dd>
+                              <Select
+                                components={{ Input: CustomSelectInput }}
+                                className="react-select"
+                                classNamePrefix="react-select"
+                                name="form-field-name"
+                                placeholder="Seleccionar..."
+                                isMulti={true} // Esto permite selecciones múltiples
+                                options={[
+                                  { value: 1, label: "Enero" },
+                                  { value: 2, label: "Febrero" },
+                                  { value: 3, label: "Marzo" },
+                                  { value: 4, label: "Abril" },
+                                  { value: 5, label: "Mayo" },
+                                  { value: 6, label: "Junio" },
+                                  { value: 7, label: "Julio" },
+                                  { value: 8, label: "Agosto" },
+                                  { value: 9, label: "Septiembre" },
+                                  { value: 10, label: "Octubre" },
+                                  { value: 11, label: "Noviembre" },
+                                  { value: 12, label: "Diciembre" },
+                                ]}
+                                value={this.state.selectedMonths} // Debes mantener un estado para las selecciones del usuario
+                                onChange={this.handleMonthSelection} // Un manejador de eventos para actualizar las selecciones
+                              />
+
                             </dl>
                           </CardSubtitle>
                           <div className="chart-container">
