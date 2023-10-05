@@ -197,21 +197,35 @@ class BudgetDetail extends Component {
     // Obtén los valores de los meses seleccionados
     const selectedMonthValues = selectedOptions.map((option) => option.value);
 
-    // Filtra los datos del gráfico en función de los meses seleccionados
-    const newBarChartData = {
-      ...this.state.barChartData,
-      datasets: this.state.barChartData.datasets.map((dataset) => ({
+    // Crea un nuevo conjunto de datos para el gráfico
+    const newDatasets = this.state.barChartData.datasets.map((dataset) => {
+      const newData = [...dataset.data]; // Copia los datos actuales del dataset
+
+      // Imprime el mes seleccionado en la consola
+      console.log("Meses seleccionados:", selectedMonthValues);
+
+
+      // Rellena con ceros para todos los meses
+      for (let i = 1; i <= 12; i++) {
+        if (!selectedMonthValues.includes(i)) {
+          newData[i - 1] = 0;
+        }
+      }
+
+      return {
         ...dataset,
-        data: dataset.data.filter((value, index) =>
-          selectedMonthValues.includes(index + 1)
-        ),
-      })),
-    };
+        data: newData,
+      };
+    });
 
-    // Actualiza el estado del gráfico con los datos filtrados
-    this.setState({ barChartData: newBarChartData });
+    // Actualiza el estado del gráfico con los nuevos datasets
+    this.setState({
+      barChartData: {
+        ...this.state.barChartData,
+        datasets: newDatasets,
+      },
+    });
   };
-
 
   downloadChartImage = () => {
     const chartContainer = document.querySelector(".chart-container"); // Reemplaza ".chart-container" con el selector correcto de tu contenedor de gráfico
