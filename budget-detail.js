@@ -152,7 +152,7 @@ class BudgetDetail extends Component {
         (item) => item.category_id === event.value
       )[0].amount_average
     );
-    for (let index = 0; index < 11; index++) {
+    for (let index = 0; index <= 11; index++) {
       category_monthly_average.data.push(average);
     }
 
@@ -201,30 +201,23 @@ class BudgetDetail extends Component {
     const newDatasets = this.state.barChartData.datasets.map((dataset) => {
       const newData = [...dataset.data]; // Copia los datos actuales del dataset
 
-      // Imprime el mes seleccionado en la consola
-      console.log("Meses seleccionados:", selectedMonthValues);
-
-
-      // Rellena con ceros para todos los meses
+      // Rellena con ceros para todos los meses no seleccionados
       for (let i = 1; i <= 12; i++) {
         if (!selectedMonthValues.includes(i)) {
           newData[i - 1] = 0;
         }
       }
 
-      return {
-        ...dataset,
-        data: newData,
-      };
+      return { ...dataset, data: newData };
     });
 
     // Actualiza el estado del gráfico con los nuevos datasets
-    this.setState({
+    this.setState((prevState) => ({
       barChartData: {
-        ...this.state.barChartData,
+        ...prevState.barChartData,
         datasets: newDatasets,
       },
-    });
+    }));
   };
 
   downloadChartImage = () => {
